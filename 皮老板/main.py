@@ -1,18 +1,20 @@
-# 导入了 Python 的 os 模块，该模块提供了对文件和目录的操作的功能
-import os
-inputPath = input('请输入待搜索的路径：')
-pattern = input('请输入关键字：')
+def getFrequency(text:str):
+    # 创建一个空列表 freq，用于存储每个字母的出现次数
+    fre = []
 
-'''
-使用 os.walk() 函数来遍历 inputPath 指定的目录及其所有子目录
-os.walk() 生成一个三元组 (dirpath, dirnames, filenames)
-其中 dirpath 是当前遍历到的目录路径，dirnames 是该目录下所有子目录的列表，filenames 是该目录下所有非目录文件的列表
-'''
-for dirpath,dirnames,filenames in os.walk(inputPath):
-    # 遍历当前目录下的所有文件名
-    for f in filenames:
-        # 检查当前文件名 f 是否包含之前输入的关键字 pattern
-        # 如果文件名中包含这个关键字，那么条件判断为真
-        if pattern in f:
-            # 打印出包含关键字的文件的完整路径
-            print(f'{inputPath}/{f}')
+    # 使用 for 循环遍历从 0 到 25 的整数（因为英文字母表有 26 个字母，从 'a' 到 'z'）
+    for i in range(26):
+        # 在 freq 列表中添加 26 个 0，设置每个字母出现的次数为 0
+        fre.append(0)
+
+    # 遍历输入文本 text 中的每个字符，使用 .lower() 方法将文本字符串转换为小写(不区分大小写)
+    for c in text.lower():
+        # 检查字符 c 是否是 'a' 到 'z' 之间的字母
+        if 'a'<= c <='z':
+            # 计算字符 c 在字母表中的位置
+            # ord('a') 得到 'a' 的 ASCII 值，然后从 c 的 ASCII 值中减去 'a' 的 ASCII 值
+            pos = ord(c) - ord('a')
+            fre[pos] += 1   # 将 freq 列表中对应位置 pos 的计数加 1
+    return fre
+
+print(getFrequency('hello world'))
