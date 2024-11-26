@@ -1,20 +1,18 @@
 def getFrequency(text:str):
-    # 创建一个空列表 freq，用于存储每个字母的出现次数
-    fre = []
+    # 创建了一个空的字典 fre，用于存储每个字母的出现频率
+    fre = {}
 
-    # 使用 for 循环遍历从 0 到 25 的整数（因为英文字母表有 26 个字母，从 'a' 到 'z'）
-    for i in range(26):
-        # 在 freq 列表中添加 26 个 0，设置每个字母出现的次数为 0
-        fre.append(0)
-
-    # 遍历输入文本 text 中的每个字符，使用 .lower() 方法将文本字符串转换为小写(不区分大小写)
+    # 使用 for 循环，遍历 text 字符串中的每个字符
+    # 计数时不区分大小写, 使用 text.lower() 将所有的字符都被转换为小写，
     for c in text.lower():
-        # 检查字符 c 是否是 'a' 到 'z' 之间的字母
+        # 检查当前字符 c 是否是在 'a' 到 'z' 之间
         if 'a'<= c <='z':
-            # 计算字符 c 在字母表中的位置
-            # ord('a') 得到 'a' 的 ASCII 值，然后从 c 的 ASCII 值中减去 'a' 的 ASCII 值
-            pos = ord(c) - ord('a')
-            fre[pos] += 1   # 将 freq 列表中对应位置 pos 的计数加 1
+            # 如果字符 c 已经在 fre 字典中，次数加 1
+            if c in fre:
+                fre[c] += 1
+            # 如果字符 c 不在 fre 字典中，这意味着它是第一次出现，设置初始值为 1
+            else:
+                fre[c] = 1
     return fre
 
-print(getFrequency('hello world'))
+print(getFrequency('Tom likes to eat apples'))
