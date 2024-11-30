@@ -1,36 +1,32 @@
-# 导入 xlrd 模块，用于读取Excel文件（.xls和.xlsx）的 Python 库
-import xlrd
+# 接受两个参数：freq（列表，用于表示字母及出现次数）和 letter（字符，表示要添加到频率列表中的字母）
+def addLetter(freq, letter):
+    i = 0
 
-'''
-这个是 Excel 表中的数据
-   0       1        2
-0  姓名	   班级	    成绩
-1  Alan1   202311	61
-2  Alan2   202311	78
-3  Alan3   202311	89
-4  Alan4   202311	99
-5  Alan5   202311	82
-6  Alan6   202312	66
-'''
+    # 使用 while 循环来遍历 freq 列表，直到找到匹配的字母或者到达列表的末尾
+    '''
+    在 freq 列表中搜索字母 letter，如果找到了，就跳出循环
+    如果遍历完整个列表都没有找到，i 将等于 len(freq)，表示 letter 不在列表中，需要被添加到列表中
+    如果找到了，就更新该字母的计数
+    '''
+    while i != len(freq) and freq[i][0] != letter:
+        i = i + 1
+    assert i == len(freq) or freq[i][0] == letter
+    if i == len(freq):
+        freq.append([letter, 1])
+    else:
+        freq[i][1] += 1
+    return freq
 
-# 1. 打开 xlsx 文件(使用 xlrd.open_workbook 函数打开位于指定路径的Excel文件)
-xlsx = xlrd.open_workbook('d:/浏览器下载的/Jack/excell.xlsx')
+def getFrequency2(text):
+    # 初始化一个空列表 freq，用于存储字母及其出现频率
+    freq = []
 
-# 2. 获取 0 号标签页. (当前只有一个标签页,即通过索引（0号，即第一个标签页）获取Excel文件中的工作表)
-table = xlsx.sheet_by_index(0)
+    # 遍历 text 字符串的每个字符，并将字符串转换为小写(不区分大小写)
+    for c in text.lower():
+        # 检查当前字符 c 是否是在 'a' 到 'z' 的范围内
+        if 'a' <= c <= 'z':
+            # 如果是字母，调用addLetter函数，将 c 添加到 freq 列表中，并更新其计数
+            freq = addLetter(freq, c)
+    return freq
 
-# 3. 获取总行数
-nrows = table.nrows
-
-# 4. 遍历数据
-count = 0
-total = 0
-for i in range(1, nrows):
-    # 使用 cell_value(row, col) 获取到指定坐标单元格的值
-    # 使用 cell_value 方法获取当前行第 1 列的值(列数从 0 开始)
-    classId = table.cell_value(i, 1)
-    if classId == 202311:
-        # 如果班级ID匹配，将当前行第 2 列(列数从 0 开始)的值加到 total 上
-        total += table.cell_value(i, 2)
-        count += 1
-print(f'平均分: {total / count}')
+print(getFrequency2('abcaabcdhf'))
