@@ -1,32 +1,113 @@
-# 接受两个参数：freq（列表，用于表示字母及出现次数）和 letter（字符，表示要添加到频率列表中的字母）
-def addLetter(freq, letter):
-    i = 0
+import math
+# 导入 math 模块，可以使用数学常量和函数，如 pi(π)
 
-    # 使用 while 循环来遍历 freq 列表，直到找到匹配的字母或者到达列表的末尾
-    '''
-    在 freq 列表中搜索字母 letter，如果找到了，就跳出循环
-    如果遍历完整个列表都没有找到，i 将等于 len(freq)，表示 letter 不在列表中，需要被添加到列表中
-    如果找到了，就更新该字母的计数
-    '''
-    while i != len(freq) and freq[i][0] != letter:
-        i = i + 1
-    assert i == len(freq) or freq[i][0] == letter
-    if i == len(freq):
-        freq.append([letter, 1])
-    else:
-        freq[i][1] += 1
-    return freq
+'''
+先定义了三个类：Point、Circle 和 Vector(点、圆、向量)，可以实现计算面积和周长、改变圆的大小和位置等
+最后创建了一个 Circle 类的实例 s1，对其进行一些测试(如打印面积，周长，圆心位置等)
+'''
 
-def getFrequency2(text):
-    # 初始化一个空列表 freq，用于存储字母及其出现频率
-    freq = []
+# 定义一个 Point 类，用于表示二维空间中的点
+class Point:
+    # 初始化方法，设置点的 x 和 y 坐标
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
 
-    # 遍历 text 字符串的每个字符，并将字符串转换为小写(不区分大小写)
-    for c in text.lower():
-        # 检查当前字符 c 是否是在 'a' 到 'z' 的范围内
-        if 'a' <= c <= 'z':
-            # 如果是字母，调用addLetter函数，将 c 添加到 freq 列表中，并更新其计数
-            freq = addLetter(freq, c)
-    return freq
+    # 获取点的 x 坐标
+    def getX(self):
+        return self._x
 
-print(getFrequency2('abcaabcdhf'))
+    # 获取点的 y 坐标
+    def getY(self):
+        return self._y
+
+    def getCooedinate(self):
+        return self._x, self._y
+
+# 定义一个 Circle 类，用于表示二维空间中的圆
+class Circle:
+    # 初始化方法，设置圆的半径和圆心（使用 Point 类的实例）
+    def __init__(self, radius: float, center: Point):
+        self._radius = radius
+        self._center = center
+
+    def getCenterLocation(self):
+        return (self._center)
+        # 返回圆心的位置（返回 Point 类的实例）
+
+    def getRadius(self):
+        return self._radius
+        # 返回圆的半径
+
+    def getArea(self):
+        return self._radius * self._radius * math.pi
+        # 计算并返回圆的面积，公式为 πr²
+
+    def getCircumference(self):
+        return math.pi * self._radius * 2
+        # 计算并返回圆的周长，公式为 2πr
+
+    def enlarge(self, n):
+        self._radius *= n
+        # 将圆的半径扩大 n 倍
+
+    def shrink(self, n):
+        self._radius /= n
+        # 将圆的半径缩小 n 倍
+
+    def move(self, vector):
+        x = self._center.getX() + vector.getX()
+        y = self._center.getY() + vector.getY()
+        newCenter = Point(x, y)
+        self._center = newCenter
+        # 将圆按照给定的向量移动，向量是一个 Vector 类的实例
+
+# 定义一个 Vector 类，用于表示二维空间中的向量
+class Vector:
+    # 初始化方法，设置向量的 x 和 y 分量，并计算向量的长度
+    def __init__(self, x, y):
+        self._x = x
+        self._y = y
+        self._length = (x ** 2 + y ** 2) ** 0.5
+
+    def getX(self):
+        return self._x
+        # 获取向量的 x 分量
+
+    def getY(self):
+        return self._y
+        # 获取向量的 y 分量
+
+# 创建一个 Circle 类的实例，半径为 2，圆心位于点(2,3)
+s1 = Circle(3,Point(2,3))
+# 打印圆 s1 的面积
+print(s1.getArea())
+# 打印圆 s1 的周长
+print(s1.getCircumference())
+
+# 调用 enlarge() 方法将圆 s1 的半径扩大 3 倍
+s1.enlarge(3)
+# 打印扩大后的圆 s1 的面积
+print(s1.getArea())
+# 打印扩大后的圆 s1 的周长
+print(s1.getCircumference())
+
+# 调用 shrink() 方法将圆 s1 的半径缩小 10 倍
+s1.shrink(10)
+# 打印缩小后的圆 s1 的面积
+print(s1.getArea())
+# 打印缩小后的圆 s1 的周长
+print(s1.getCircumference())
+
+# 打印圆 s1 的圆心位置
+print(s1.getCenterLocation().getCooedinate())
+# 或者直接访问 x 和 y 属性
+# print((s1.getCenterLocation().getX(), s1.getCenterLocation().getY()))
+
+
+# 创建一个 Vector 类的实例，表示向量(2,9)，然后调用 move() 方法将圆 s1 按照这个向量移动
+s1.move(Vector(2,9))
+# 打印移动后的圆 s1 的圆心位置
+print(s1.getCenterLocation().getCooedinate())
+# 或者直接访问 x 和 y 属性
+# print((s1.getCenterLocation().getX(), s1.getCenterLocation().getY()))
