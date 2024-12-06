@@ -1,159 +1,148 @@
-# 导入 Python 的 random 模块，用于生成随机数
-import random
+# 定义 Customer 类
+class Customer:
+    # 创建 Customer 对象时初始化属性
+    def __init__(self, name, ID):
+        self._name = name        # 客户的名字
+        self._ID = ID            # 客户的唯一标识符
+        self._loyaltyPoints = 0  # 客户的忠诚度积分，初始化为 0
 
-# 定义一个名为 GameCharacter 的类，用于创建游戏中角色的基本属性和行为
-class GameCharacter:
-    # 生命值初始为 400
-    HP = 400
-    # 攻击力初始为 200
-    attack_power = 200
+    # 获取客户名字
+    def getName(self):
+        return self._name
 
-    def __init__(self, name):
-        self.name = name
+    # 获取客户 ID
+    def getID(self):
+        return self._ID
 
-    # 处理角色的防御行为
-    def defend(self, command):
-        # 如果防御指令为 1，打印角色进入格挡姿态的消息，并返回 0.5 作为防御效果
-        if command == 1:
-            print(f"{self.name} is in a blocking stance ~")
-            return 0.5
-        # 如果防御指令为 2，打印角色尝试闪避的消息，并随机返回 0.3 或 1 作为防御效果
-        elif command == 2:
-            print(f"{self.name} tries to dodge the attack ~")
-            return random.choice([0.3, 1])
+    # 显示客户忠诚度积分
+    def showPoints(self):
+        return self._loyaltyPoints
 
-class Warrior(GameCharacter):
-    def attack(self, command):
-        # 如果攻击指令为 1，打印战士执行突刺攻击的消息，并返回 200 作为攻击力
-        if command == 1:
-            print(f"{self.name} performs a thrust attack!!")
-            return 200
-        # 如果攻击指令为 2，打印战士执行回旋挥砍的消息，并随机返回 300 或 100 作为攻击力
-        elif command == 2:
-            print(f"{self.name} executes a spinning slash!")
-            return random.choice([300, 100])
+    # 更新客户忠诚度积分，参数 purchaseAmount 为消费金额
+    def updatePoints(self, purchaseAmount):
+        self._loyaltyPoints += purchaseAmount / 10  # 将消费金额除以 10，得到积分，并累加到 _loyaltyPoints
 
-class Monster(GameCharacter):
-    def attack(self, command):
-        # 如果攻击指令为 1，打印怪物使用爪击攻击的消息，并返回 180 作为攻击力
-        if command == 1:
-            print(f"{self.name} uses a claw attack!")
-            return 180
-        # 如果攻击指令为 2，打印怪物喷吐毒液的消息，并随机返回 320 或 100 作为攻击力
-        elif command == 2:
-            print(f"{self.name} sprays venom!")
-            return random.choice([320, 100])
+# 获取用户输入的命令
+def getUserCommand():
+    print("\nWhat do you want to do next?")
+    print("1. Display all customers")        # 选项1： 显示所有客户信息
+    print("2. Add a new customer")           # 选项2： 添加一个新的客户
+    print("3. Update loyalty points for a customer")  # 选项3： 更新某个客户的忠诚度积分
+    print("4. Remove a customer")            # 选项4： 删除一个客户
+    print("5. Update customer information")  # 选项5： 更新客户信息
+    print("0. Exit")                         # 选项0： 退出程序
+    while True:  # 循环直到输入有效的命令
+        command = input("Please enter your choice (1 - 5 for options, 0 to exit): ")
+        if command.isdigit() and 0 <= int(command) <= 5:  # 检查输入是否为数字且在 0 - 5 之间
+            return int(command)  # 返回输入的命令作为整数
+        else:
+            # 如果输入无效，提示重新输入
+            print("Invalid input, please enter a number between 0 and 5.")
 
-# 输入玩家的姓名
-player_name = input("Please enter your name: ")
-# 创建 Warrior(战士)类的实例，并传入输入的姓名
-player = Warrior(player_name)
-# 创建 Monster 类的实例，命名为 "Goblin"
-enemy = Monster("Goblin")
-# 生成一个随机数，用于决定怪物的攻击指令
-random_command = random.choice([1, 2])
-
-while True:
-    attack_command = int(input("Enter your attack command (1) Normal Attack (2) Special Attack: "))
-    # 调用 player 的 attack 方法，并获取攻击力
-    player_attack_power = player.attack(attack_command)
-
-    # 调用 enemy 的 defend 方法，传入随机生成的指令，计算 player 攻击对 enemy 造成的伤害
-    damage = int(enemy.defend(random_command) * player_attack_power)
-
-    # 从 enemy 的 HP 中减去计算出的伤害
-    enemy.HP -= damage
-
-    # 从 enemy 的 HP 中减去计算出的伤害
-    if enemy.HP <= 0:
-        print(f"{enemy.name} has fallen, {player.name} wins!")
-        break
-    # 打印 enemy 受到的伤害和剩余 HP
+# 显示数据库中的所有客户信息
+def displayCustomers(customerDB):
+    # 如果客户数据库为空，打印没有客户信息
+    if not customerDB:
+        print("No customers in the database.")
     else:
-        print(f"{enemy.name} took {damage} damage! HP remaining {enemy.HP}")
-    print("")
+        # 遍历客户数据库中的每个客户
+        for ID, customer in customerDB.items():
+            # 打印客户 ID、名字和积分
+            print(f"ID: {ID}, Name: {customer.getName()}, Loyalty Points: {customer.showPoints()}")
 
-    # 输入防御指令，并将其转换为整数
-    defend_command = int(input("Enter your defense command (1) Block (2) Dodge: "))
+# 添加新客户到数据库
+def addCustomer(customerDB):
+    while True:  # 循环直到用户输入一个唯一的 ID
+        ID = input("Enter the new customer's ID: ")
+        # 检查 ID 是否已经存在于数据库中
+        if ID in customerDB:
+            # 如果 ID 已被占用，提示用户
+            print("ID already exists. Please try a different ID.")
+        else:
+            # 如果 ID 唯一，跳出循环
+            break
+    while True:  # 循环直到输入一个非空的名字
+        name = input("Enter the new customer's name: ")
+        # 如果名字不为空，跳出循环
+        if name:
+            break
+        else:
+            # 如果名字为空，打印提示
+            print("Name cannot be empty.")
+    customerDB[ID] = Customer(name, ID)  # 创建新的客户对象并添加到数据库
+    print(f"Customer {name} added with ID {ID}.")  # 打印添加成功的信息
 
-    # 调用 enemy 的 attack 方法，传入随机生成的指令，获取 enemy 的攻击力
-    enemy_attack_power = enemy.attack(random_command)
+# 更新客户的忠诚度积分
+def updatePoints(customerDB):
+    while True:  # 循环直到输入一个存在的客户 ID
+        customerID = input("Enter the customer's ID to update loyalty points: ")
+        # 如果客户 ID 存在于数据库中
+        if customerID in customerDB:
+            break  # 跳出循环
+        else:
+            # 如果客户 ID 不存在，提示用户
+            print("Customer not found. Please try again.")
+    while True:  # 循环直到输入一个有效的消费金额
+        try:
+            amount = float(input(f"Enter the amount spent by {customerDB[customerID].getName()}: "))
+            customerDB[customerID].updatePoints(amount)  # 更新客户的积分
+            print(f"Updated {customerDB[customerID].getName()}'s points successfully.")  # 打印更新成功的信息
+            break  # 跳出循环
+        except ValueError:  # 如果输入不是有效的数字，提示输入有效的数字
+            print("Invalid amount. Please enter a valid number.")
 
-    # 根据输入的防御指令，调用 player 的 defend 方法，并计算 enemy 攻击对 player 造成的伤害
-    damage = int(player.defend(defend_command) * enemy_attack_power)
+# 从数据库中删除客户
+def removeCustomer(customerDB):
+    while True:  # 循环直到输入一个存在的客户 ID
+        customerID = input("Enter the customer's ID to remove: ")
+        # 如果客户 ID 存在于数据库中，删除客户
+        if customerID in customerDB:
+            del customerDB[customerID]
+            print("Customer removed successfully.")  # 打印删除成功的信息
+            break
+        else:
+            # 如果客户 ID 不存在，打印提示
+            print("Customer not found. Please try again.")
 
-    # 从 player 的 HP 中减去计算出的伤害
-    player.HP -= damage
-    # 如果 player 的 HP 小于等于 0，打印游戏结束的消息并退出循环
-    if player.HP <= 0:
-        print(f"{player.name} has been defeated, game over ~")
-        break
-    # 打印 player 受到的伤害和剩余 HP
-    else:
-        print(f"{player.name} took {damage} damage! HP remaining {player.HP}")
-    print("")
+# 更新客户的信息
+def updateCustomerInfo(customerDB):
+    while True:  # 循环直到输入一个存在的客户 ID
+        customerID = input("Enter the customer's ID to update information: ")
+        # 如果客户 ID 存在于数据库中，跳出循环
+        if customerID in customerDB:
+            break
+        else:
+            # 如果客户 ID 不存在，打印提示
+            print("Customer not found. Please try again.")
+    while True:  # 循环直到输入一个非空的新名字
+        new_name = input(f"Enter the new name for customer ID {customerID}: ")
+        # 如果新名字不为空，更新客户的名字，跳出循环
+        if new_name:
+            customerDB[customerID]._name = new_name
+            break
+        else:
+            # 如果新名字为空，打印提示
+            print("Name cannot be empty.")
+    print(f"Customer information updated successfully.")  # 打印更新成功的信息
 
-'''
-这是中文版，比较好理解
-import random
-class 游戏角色:
-    生命值 = 400
-    攻击力 = 200
+# 使用空字典初始化客户数据库
+customerDB = {}
 
-    def __init__(self, 姓名):
-        self.姓名 = 姓名
+# 获取用户命令
+userCommand = getUserCommand()
+# 循环直到选择退出程序
+while userCommand != 0:
+    if userCommand == 1:
+        displayCustomers(customerDB)    # 显示所有客户
+    elif userCommand == 2:
+        addCustomer(customerDB)         # 添加新客户
+    elif userCommand == 3:
+        updatePoints(customerDB)        # 更新积分
+    elif userCommand == 4:
+        removeCustomer(customerDB)      # 删除客户
+    elif userCommand == 5:
+        updateCustomerInfo(customerDB)  # 更新客户信息
 
-    def 防御(self, 指令):
-        if 指令 == 1:
-            print(f"{self.姓名}摆出了格挡姿势 ~")
-            return 0.5
-        elif 指令 == 2:
-            print(f"{self.姓名}尝试闪避攻击 ~")
-            return random.choice([0.3,1])
+    userCommand = getUserCommand()      # 再次获取输入的命令
 
-class 战士(游戏角色):
-    def 攻击(self, 指令):
-        if 指令 == 1:
-            print(f"{self.姓名}使出了突刺攻击！！")
-            return 200
-        elif 指令 == 2:
-            print(f"{self.姓名}奋力使出了回旋挥砍！！")
-            return random.choice([300, 100])
-
-class 魔物(游戏角色):
-    def 攻击(self, 指令):
-        if 指令 == 1:
-            print(f"{self.姓名}使出了利爪攻击！！")
-            return 180
-        elif 指令 == 2:
-            print(f"{self.姓名}张出血口喷出了毒液！！")
-            return random.choice([320, 100])
-
-
-玩家姓名 = input("请输入你的姓名：")
-玩家 = 战士(玩家姓名)
-敌方 = 魔物("哥布林")
-随机 = random.choice([1, 2])
-while True:
-    攻击指令 = int(input("请输入您的攻击指令(1)普通攻击(2)特殊攻击："))
-    玩家攻击力 = 玩家.攻击(攻击指令)
-    损血 = int(敌方.防御(随机) * 玩家攻击力)
-    敌方.生命值 -= 损血
-    if 敌方.生命值 <= 0:
-        print(f"{敌方.姓名}倒下了，{玩家.姓名}胜利！！")
-        break
-    else:
-        print(f"{敌方.姓名}受到了{损血}伤害！生命值剩下 {敌方.生命值}")
-    print("")
-
-    防御指令 = int(input("请输入您的防御指令(1)格挡(2)闪避："))
-    敌方攻击力 = 敌方.攻击(随机)
-    损血 = int(玩家.防御(防御指令) * 敌方攻击力)
-    玩家.生命值 -= 损血
-    if 玩家.生命值 <= 0:
-        print(f"{玩家.姓名}受伤过重倒下了，游戏结束 ~")
-        break
-    else:
-        print(f"{玩家.姓名}受到了{损血}伤害！生命值剩下 {玩家.生命值}")
-    print("")
-'''
+print("Bye")
