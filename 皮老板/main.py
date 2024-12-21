@@ -1,116 +1,91 @@
-class Book:  # 图书类
-    """用于表示图书馆中的一本书的类."""
-
-    def __init__(self, title, author, isbn):
-        """用标题、作者和ISBN初始化书籍."""
-        self._title = title
-        self._author = author
-        self._isbn = isbn
-
-    def getTitle(self):
-        """返回书籍的标题."""
-        return self._title
-
-    def getAuthor(self):
-        """返回书籍的作者."""
-        return self._author
-
-    def getIsbn(self):
-        """返回书籍的ISBN编号."""
-        return self._isbn
-
-    def setTitle(self, title):
-        """设置书籍的标题."""
-        self._title = title
-
-    def setAuthor(self, author):
-        """设置书籍的作者."""
-        self._author = author
-
-    def setIsbn(self, isbn):
-        """设置书籍的ISBN编号."""
-        self._isbn = isbn
-
-    def displayBookInfo(self):
-        """显示书籍的信息."""
-        print(f"标题：{self.getTitle()}, 作者：{self.getAuthor()}, ISBN：{self.getIsbn()}")
+def addString(stringList, string):
+    """向列表中添加一个字符串，并返回更新后的列表"""
+    stringList.append(string)
+    return stringList
 
 
-class Member:  # 成员类
-    """用于表示图书馆的成员的类."""
-
-    def __init__(self, name):
-        """用名字初始化成员，并创建一个空的借阅书籍列表."""
-        self._name = name
-        self._borrowedBooks = []
-
-    def getName(self):
-        """返回成员的名字."""
-        return self._name
-
-    def getBorrowedBooks(self):
-        """返回借阅书籍的列表."""
-        return self._borrowedBooks
-
-    def setName(self, name):
-        """设置成员的名字."""
-        self._name = name
-
-    def setBorrowedBooks(self, borrowedBooks):
-        """设置借阅书籍的列表."""
-        self._borrowedBooks = borrowedBooks
-
-    def borrowBook(self, book):
-        """将一本书添加到成员的借阅书籍列表中."""
-        self._borrowedBooks.append(book)
-
-    def returnBook(self, title):
-        """通过标题从成员的借阅书籍列表中移除一本书."""
-        newBorrowedBooks = []
-        for book in self._borrowedBooks:
-            if book.getTitle() != title:
-                newBorrowedBooks.append(book)
-        self._borrowedBooks = newBorrowedBooks
-
-    def displayBorrowedBooks(self):
-        """显示所有借阅的书籍."""
-        print(f"{self.getName()}借阅的书籍：")
-        bookIndex = 1
-        for book in self._borrowedBooks:
-            print(f"{bookIndex}. 标题：{book.getTitle()}, 作者：{book.getAuthor()}, ISBN：{book.getIsbn()}")
-            bookIndex += 1
+def deleteString(stringList, string):
+    """从列表中移除所有指定的字符串"""
+    assert string in stringList, "String not found in the list."
+    while string in stringList:
+        stringList.remove(string)
+    return stringList
 
 
-memberName = input("输入成员的名字：")
-member = Member(memberName)
+def searchString(stringList, string):
+    """在列表中搜索指定字符串，并返回所有位置"""
+    assert string in stringList, "String not found in the list."
+    positions = []
+    index = 0
+    for each in stringList:
+        if each == string:
+            positions.append(index)
+        index += 1
+    return positions
 
-# 循环处理借书
-optionBorrow = input('你想借书吗（"Y"继续，其他停止）？')
-while optionBorrow == "Y":
-    title = input("输入书籍标题：")
-    author = input("输入作者名字：")
-    isbn = input("输入ISBN编号：")
 
-    # 确保所有字段都已填写
-    while "" in [title, author, isbn]:
-        print("错误：所有字段必须填写。请重新输入！")
-        title = input("输入书籍标题：")
-        author = input("输入作者名字：")
-        isbn = input("输入ISBN编号：")
+def replaceString(stringList, oldString, newString):
+    """将列表中所有的旧字符串替换为新字符串"""
+    assert oldString in stringList, "Old string not found in the list."
+    for i in range(len(stringList)):
+        if stringList[i] == oldString:
+            stringList[i] = newString
+    return stringList
 
-    book = Book(title, author, isbn)
-    member.borrowBook(book)
-    optionBorrow = input('你想再借一本书吗（"Y"继续，其他停止）？')
 
-# 显示所有借阅的书籍
-member.displayBorrowedBooks()
+def menu():
+    """显示菜单选项"""
+    print("1. Add String")
+    print("2. Delete String")
+    print("3. Search String")
+    print("4. Replace String")
+    print("0. Exit")
 
-# 循环处理还书
-optionReturn = input('你想还书吗（"Y"继续，其他停止）？')
-while optionReturn == "Y":
-    title = input("输入要还的书籍标题：")
-    member.returnBook(title)
-    optionReturn = input('你想再还一本书吗（"Y"继续，其他停止）？')
 
-# 还书后显示所有借阅的书籍
-member.displayBorrowedBooks()
+# 初始化列表
+stringList = ["apple", "banana", "cherry", "apple"]
+options = [0, 1, 2, 3, 4]
+print("stringList:", stringList)
+
+menu()  # 打印菜单
+# 获取一个有效的输入(0, 1, 2, 3, 4)
+option = int(input("Enter an option (0, 1, 2, 3, 4):"))
+while option not in options:
+    print("Error input, enter an option again!")
+    option = int(input("Choose an option (0, 1, 2, 3, 4):"))
+
+while option != 0:
+    # 添加字符串
+    if option == 1:
+        string = input("Enter string to add: ")
+        stringList = addString(stringList, string)
+
+    # 删除字符串
+    elif option == 2:
+        string = input("Enter string to delete: ")
+        stringList = deleteString(stringList, string)
+
+    # 搜索字符串
+    elif option == 3:
+        string = input("Enter string to search: ")
+        result = searchString(stringList, string)
+        if len(result):
+            print("The position(s) of the string in the stringList is(are):", result)
+        else:
+            print("The string is not in the stringList")
+
+    # 替换字符串
+    elif option == 4:
+        oldString = input("Enter old string: ")
+        newString = input("Enter new string: ")
+        stringList = replaceString(stringList, oldString, newString)
+
+    print("stringList:", stringList)
+    menu()
+
+    # 再次获取一个有效的输入(0, 1, 2, 3, 4)
+    option = int(input("Enter an option (0, 1, 2, 3, 4):"))
+    while option not in options:
+        print("Error input, enter an option again!")
+        option = int(input("Enter an option (0, 1, 2, 3, 4):"))
+print("exit")
